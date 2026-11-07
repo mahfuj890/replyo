@@ -1,0 +1,45 @@
+{
+  "manifest_version": 3,
+  "name": "Replyo",
+  "version": "0.1.0",
+  "description": "Draft client replies with AI, in your voice, right inside WhatsApp Web.",
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://web.whatsapp.com/*",
+    "https://generativelanguage.googleapis.com/*"
+  ],
+  "background": {
+    "service_worker": "src/background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://web.whatsapp.com/*"],
+      "js": ["src/content.js"],
+      "css": ["src/panel/panel.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "options_page": "src/options/options.html",
+  "action": {
+    "default_title": "Replyo settings"
+  },
+  "commands": {
+    "open-panel": {
+      "suggested_key": { "default": "Alt+R" },
+      "description": "Open Replyo on the selected message"
+    },
+    "generate": {
+      "suggested_key": { "default": "Alt+G" },
+      "description": "Generate the reply"
+    },
+    "insert-draft": {
+      "suggested_key": { "default": "Alt+I" },
+      "description": "Insert the draft into the message box"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

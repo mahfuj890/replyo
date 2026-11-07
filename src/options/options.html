@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Replyo settings</title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <main class="wrap">
+      <h1>Replyo settings</h1>
+      <p class="sub">Your key is stored only in this browser and is used solely to call the AI model.</p>
+
+      <label class="field">
+        <span>AI provider</span>
+        <select id="provider">
+          <option value="gemini">Google Gemini (free tier)</option>
+          <option value="claude" disabled>Claude (coming soon)</option>
+          <option value="openai" disabled>OpenAI (coming soon)</option>
+        </select>
+      </label>
+
+      <label class="field">
+        <span>API key</span>
+        <input id="apiKey" type="password" autocomplete="off" placeholder="Paste your Gemini API key" />
+        <small>Get a free key at <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noreferrer">Google AI Studio</a>.</small>
+      </label>
+
+      <label class="field">
+        <span>Model</span>
+        <input id="model" type="text" placeholder="gemini-2.5-flash" />
+        <small>Use a current free-tier model. If you get a 404, change this to one your key can access.</small>
+      </label>
+
+      <label class="field">
+        <span>Default tone</span>
+        <select id="tone">
+          <option value="friendly">Friendly</option>
+          <option value="formal">Formal</option>
+          <option value="firm">Firm</option>
+        </select>
+      </label>
+
+      <label class="field">
+        <span>Insert mode</span>
+        <select id="insertMode">
+          <option value="insert">Insert into the message box</option>
+          <option value="copy">Copy to clipboard only</option>
+        </select>
+      </label>
+
+      <label class="field">
+        <span>Your style prompt</span>
+        <textarea id="stylePrompt" rows="10"></textarea>
+        <small>This is the voice and the rules the model follows. Edit it to sound like you.</small>
+      </label>
+
+      <div class="actions">
+        <button id="save" class="primary">Save</button>
+        <button id="shortcuts">Change keyboard shortcuts</button>
+        <span id="status" class="status"></span>
+      </div>
+    </main>
+
+    <script src="../defaults.js"></script>
+    <script src="options.js"></script>
+  </body>
+</html>

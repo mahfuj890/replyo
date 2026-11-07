@@ -1,0 +1,15 @@
+# Claude Code personal settings (the shared .claude/settings.json IS committed)
+.claude/settings.local.json
+
+# Secrets
+.env
+.env.*
+*.pem
+*.key
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+node_modules/
+*.zip

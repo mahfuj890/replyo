@@ -1,0 +1,117 @@
+/* Replyo — in-page panel and floating button.
+   All ids/classes are prefixed with "replyo-" to avoid clashing with WhatsApp. */
+
+#replyo-fab {
+  position: fixed;
+  right: 20px;
+  bottom: 96px;
+  z-index: 2147483646;
+  background: #25d366;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: system-ui, -apple-system, sans-serif;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+#replyo-panel {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 2147483647;
+  width: 330px;
+  max-height: 82vh;
+  overflow: auto;
+  background: #ffffff;
+  color: #111111;
+  border: 1px solid #dddddd;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+  padding: 12px;
+  display: none;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+#replyo-panel.open {
+  display: block;
+}
+
+#replyo-panel .replyo-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+  font-size: 15px;
+  margin-bottom: 8px;
+}
+
+#replyo-close {
+  border: none;
+  background: none;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  color: #666;
+}
+
+#replyo-panel .replyo-label {
+  display: block;
+  font-size: 12px;
+  color: #555;
+  margin: 8px 0 4px;
+}
+
+#replyo-panel textarea,
+#replyo-panel select {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 6px 8px;
+  font-size: 13px;
+  font-family: inherit;
+  resize: vertical;
+}
+
+#replyo-panel .replyo-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  align-items: center;
+}
+
+#replyo-panel .replyo-row button {
+  flex: 1;
+  border: 1px solid #ccc;
+  background: #f6f6f6;
+  border-radius: 8px;
+  padding: 6px 8px;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+#replyo-panel .replyo-primary {
+  background: #25d366 !important;
+  color: #fff;
+  border-color: #25d366 !important;
+}
+
+#replyo-panel .replyo-tones button {
+  font-size: 12px;
+}
+
+#replyo-panel .replyo-status {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #555;
+  min-height: 16px;
+}
+
+#replyo-panel .replyo-status.error {
+  color: #c0392b;
+}
