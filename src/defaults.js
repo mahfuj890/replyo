@@ -10,9 +10,14 @@ const REPLYO_DEFAULTS = {
   apiKey: "",
 
   // Gemini model id. Pick a current free-tier model from Google AI Studio.
-  // Good free choices have included: gemini-2.5-flash, gemini-2.5-flash-lite.
+  // Google retires models for new users over time (gemini-2.5-flash now 404s).
   // If you get a 404 "model not found", change this to a model your key can see.
-  model: "gemini-2.5-flash",
+  model: "gemini-3.8-flash",
+
+  // How much the model "thinks" before replying. Less thinking = faster.
+  // "fast" is best for short WhatsApp replies; "deep" for trickier messages.
+  // Mapped to the right per-model API field in background.js.
+  thinkingMode: "fast",
 
   // Default tone when you don't pick one in the panel.
   tone: "friendly",

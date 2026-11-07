@@ -1,6 +1,6 @@
 // Replyo — settings page logic. Loads/saves to chrome.storage.local.
 
-const FIELDS = ["provider", "apiKey", "model", "tone", "insertMode", "stylePrompt"];
+const FIELDS = ["provider", "apiKey", "model", "thinkingMode", "tone", "insertMode", "stylePrompt"];
 
 function $(id) {
   return document.getElementById(id);

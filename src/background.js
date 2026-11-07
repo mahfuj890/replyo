@@ -80,23 +80,71 @@ function buildPrompt(settings, payload) {
 
 // --- Gemini call ------------------------------------------------------------
 
-async function callGemini(settings, prompt) {
+const GEMINI_TIMEOUT_MS = 40000;
+
+// Map the user's thinking mode to the right per-model API field.
+// 2.5-series models take a token budget (0 = off, -1 = dynamic); newer
+// models take a level. Returns null when the model default should stand.
+function thinkingConfigFor(model, mode) {
+  const is25 = /gemini-2\.5/.test(model);
+  switch (mode) {
+    case "fast":
+      return is25 ? { thinkingBudget: 0 } : { thinkingLevel: "low" };
+    case "deep":
+      return is25 ? null : { thinkingLevel: "high" };
+    case "balanced":
+    default:
+      return is25 ? { thinkingBudget: -1 } : { thinkingLevel: "medium" };
+  }
+}
+
+async function postGemini(settings, prompt, generationConfig) {
   const url =
     "https://generativelanguage.googleapis.com/v1beta/models/" +
     encodeURIComponent(settings.model) +
     ":generateContent";
 
-  const res = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-goog-api-key": settings.apiKey
-    },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: { temperature: 0.7 }
-    })
-  });
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), GEMINI_TIMEOUT_MS);
+  try {
+    return await fetch(url, {
+      method: "POST",
+      signal: controller.signal,
+      headers: {
+        "Content-Type": "application/json",
+        "x-goog-api-key": settings.apiKey
+      },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig
+      })
+    });
+  } catch (e) {
+    if (e.name === "AbortError") {
+      throw new Error(
+        `Gemini didn't respond within ${GEMINI_TIMEOUT_MS / 1000}s. It may be busy — try again, or switch to a lite model in settings.`
+      );
+    }
+    throw e;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function callGemini(settings, prompt) {
+  const baseConfig = { temperature: 0.7 };
+  const thinkingConfig = thinkingConfigFor(settings.model, settings.thinkingMode);
+
+  // Apply the chosen thinking config. If the model rejects that field (400),
+  // retry once without it so generation still works.
+  let res = await postGemini(
+    settings,
+    prompt,
+    thinkingConfig ? { ...baseConfig, thinkingConfig } : baseConfig
+  );
+  if (res.status === 400 && thinkingConfig) {
+    res = await postGemini(settings, prompt, baseConfig);
+  }
 
   if (!res.ok) {
     const text = await res.text();

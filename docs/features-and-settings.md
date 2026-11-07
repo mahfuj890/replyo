@@ -26,6 +26,7 @@ Configured on the settings page; stored in `chrome.storage.local`. Defaults live
 | AI provider | Gemini, Claude or OpenAI |
 | API key | Your own key for that provider, stored locally |
 | Model | Which model to call |
+| Thinking | How much the model reasons before replying: fast, balanced or deep |
 | Style prompt | The description of your voice and the rules the model follows |
 | Default tone | Friendly, formal or firm when you do not pick one |
 | Context depth | Surrounding messages to pull (`0` = only the selected one) |

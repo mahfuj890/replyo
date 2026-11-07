@@ -28,8 +28,18 @@
 
       <label class="field">
         <span>Model</span>
-        <input id="model" type="text" placeholder="gemini-2.5-flash" />
+        <input id="model" type="text" placeholder="gemini-3.8-flash" />
         <small>Use a current free-tier model. If you get a 404, change this to one your key can access.</small>
+      </label>
+
+      <label class="field">
+        <span>Thinking</span>
+        <select id="thinkingMode">
+          <option value="fast">Fast — minimal thinking, quickest replies</option>
+          <option value="balanced">Balanced — some thinking</option>
+          <option value="deep">Deep — most thinking, slower</option>
+        </select>
+        <small>Short replies rarely need more than Fast. Raise it only if answers feel shallow.</small>
       </label>
 
       <label class="field">
