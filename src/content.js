@@ -149,6 +149,16 @@ function doInsert() {
     return;
   }
   box.focus();
+
+  // Prefer a synthetic paste: WhatsApp's own paste handler converts the "\n"
+  // newlines into real line breaks (so multi-paragraph drafts keep their shape)
+  // and paste never sends the message. execCommand("insertText") collapses the
+  // newlines into one line, so it's only the fallback for older browsers.
+  if (insertViaPaste(box, draft)) {
+    setStatus("Inserted — review and send.");
+    return;
+  }
+
   const ok = document.execCommand("insertText", false, draft);
   if (!ok) {
     navigator.clipboard.writeText(draft);
@@ -156,6 +166,28 @@ function doInsert() {
     return;
   }
   setStatus("Inserted — review and send.");
+}
+
+// Dispatch a paste event carrying the draft. Returns false if this browser
+// won't let us build the event's clipboard data, so the caller can fall back.
+function insertViaPaste(box, text) {
+  try {
+    const data = new DataTransfer();
+    data.setData("text/plain", text);
+    const ev = new ClipboardEvent("paste", {
+      clipboardData: data,
+      bubbles: true,
+      cancelable: true
+    });
+    // Some older Chromium builds null out clipboardData on synthetic events.
+    if (!ev.clipboardData || ev.clipboardData.getData("text/plain") !== text) {
+      return false;
+    }
+    box.dispatchEvent(ev);
+    return true;
+  } catch (e) {
+    return false;
+  }
 }
 
 init();
