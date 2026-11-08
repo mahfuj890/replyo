@@ -18,6 +18,21 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
+#replyo-grab {
+  position: fixed;
+  z-index: 2147483646;
+  background: #25d366;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: system-ui, -apple-system, sans-serif;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
 #replyo-panel {
   position: fixed;
   right: 20px;

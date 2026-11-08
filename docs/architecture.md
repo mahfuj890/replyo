@@ -21,9 +21,13 @@ inserted into the chat box for review.
 ## End-to-end flow
 
 1. Open WhatsApp Web with a client conversation on screen.
-2. Select the client message you want to answer. In a busy group, selecting one message
-   is how you tell Replyo which thread to focus on.
-3. Press **Alt+R** or click the floating button. The panel opens with the message loaded.
+2. Point Replyo at the message you want to answer. Any of these work:
+   - hover the message bubble and click the **Reply** button that appears beside it,
+   - **Alt+click** the bubble, or
+   - highlight the text and press **Alt+R** (the original way).
+   The first two grab the whole message with no highlighting. Right-click is left to
+   WhatsApp, so its native menu keeps working.
+3. The panel opens with the message loaded (Alt+R and the floating button open it too).
 4. Type your rough points (Phase 2 adds one-tap quick-intents).
 5. Click **Generate**. The panel passes the message, your points and your saved style
    prompt to the background worker, which calls the AI model.

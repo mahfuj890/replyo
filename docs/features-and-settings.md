@@ -8,6 +8,7 @@ for what ships when.
 | Feature | Description | Phase |
 | --- | --- | --- |
 | Select-and-draft | Reads the selected client message and your points, returns a draft | 1 |
+| Mouse message pick | Grab a whole message by hover-button or Alt+click — no highlighting | 2 |
 | Tone nudges | Regenerate the draft Shorter / Warmer / Firmer without retyping | 1 |
 | Insert or copy | Drops the draft into the message box, with clipboard fallback | 1 |
 | Quick-intents | One-tap buttons for your most common reply types | 2 |
@@ -59,3 +60,7 @@ main triggers are registered as commands, and the rest work while the panel is f
 | Esc | Close the panel |
 
 A floating button in the page corner does the same as Alt+R, for when you would rather click.
+
+To pick a message with the mouse only (no highlighting), hover a bubble and click the
+**Reply** button that appears beside it, or **Alt+click** the bubble. Both load the whole
+message and open the panel. Right-click is left to WhatsApp's own menu.

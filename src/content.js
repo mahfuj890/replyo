@@ -7,7 +7,12 @@
 // WhatsApp changes its HTML. If reading or inserting stops working, fix them here.
 const CONFIG = {
   messageInput: 'footer div[contenteditable="true"]',
-  messageBubbles: "div.message-in, div.message-out" // reserved for Phase 2 context grab
+  // A message in the OPEN conversation. WhatsApp renames classes often, so we
+  // match several stable anchors, all scoped to #main (not the chat sidebar).
+  messageBubbles:
+    "#main div.message-in, #main div.message-out, #main div[data-id]",
+  // The actual message text inside a bubble (skips sender name, time, ticks).
+  bubbleText: "span.selectable-text"
 };
 
 let panelEl = null;
@@ -20,11 +25,121 @@ function init() {
     if (msg.command === "insert-draft") doInsert();
   });
   addFloatingButton();
+  setupBubblePickers();
 }
 
 function getSelectionText() {
   const sel = window.getSelection && window.getSelection().toString().trim();
   return sel || "";
+}
+
+// --- Mouse-based message picking -------------------------------------------
+// Three ways to grab a whole message by mouse, all routed through grabFromBubble:
+//   1. a "Reply" button that appears on the bubble you hover
+//   2. a right-click menu on a bubble
+//   3. Alt+click on a bubble
+// Manual highlight + Alt+R still works and is untouched.
+
+// The nearest message bubble to an event target, or null. One place so all
+// three triggers agree on what counts as a bubble.
+function bubbleFrom(target) {
+  return (target && target.closest && target.closest(CONFIG.messageBubbles)) || null;
+}
+
+// Pull just the message text out of a bubble, skipping sender/time/ticks.
+function getBubbleText(bubble) {
+  const spans = bubble.querySelectorAll(CONFIG.bubbleText);
+  if (spans.length) {
+    return Array.from(spans)
+      .map((s) => s.innerText)
+      .join("")
+      .trim();
+  }
+  return (bubble.innerText || "").trim();
+}
+
+// The shared action: load a bubble's text into the panel and open it.
+function grabFromBubble(bubble) {
+  if (!bubble) return;
+  const text = getBubbleText(bubble);
+  if (!panelEl) buildPanel();
+  if (text) panelEl.querySelector("#replyo-client").value = text;
+  panelEl.classList.add("open");
+  panelEl.querySelector("#replyo-points").focus();
+  setStatus(text ? "Message loaded — add your points." : "That bubble had no text.", !text);
+}
+
+let grabBtn = null; // reusable hover button, moved to the hovered bubble
+
+function setupBubblePickers() {
+  // --- 1. Hover "Reply" button --------------------------------------------
+  grabBtn = document.createElement("button");
+  grabBtn.id = "replyo-grab";
+  grabBtn.textContent = "Reply";
+  grabBtn.title = "Draft a reply to this message";
+  grabBtn.style.display = "none";
+  grabBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (grabBtn._bubble) grabFromBubble(grabBtn._bubble);
+    hideGrabButton();
+  });
+  document.body.appendChild(grabBtn);
+
+  document.addEventListener("mouseover", (e) => {
+    const t = e.target;
+    if (t.closest && t.closest("#replyo-grab")) return; // over the button itself
+    const bubble = bubbleFrom(t);
+    if (bubble) showGrabButton(bubble);
+    else hideGrabButton();
+  });
+  // The button is viewport-positioned, so it goes stale on scroll — hide it.
+  window.addEventListener("scroll", hideGrabButton, true);
+
+  // --- 2. Alt+click --------------------------------------------------------
+  // (Right-click is left to WhatsApp so its native menu keeps working.)
+  document.addEventListener(
+    "click",
+    (e) => {
+      if (!e.altKey) return;
+      const bubble = bubbleFrom(e.target);
+      if (!bubble) return;
+      e.preventDefault();
+      e.stopPropagation();
+      grabFromBubble(bubble);
+    },
+    true // capture, to beat WhatsApp's own click handlers
+  );
+}
+
+// Place the button just to the LEFT of the message text, outside the bubble,
+// so it never covers the text or the timestamp. If there's no room on the left
+// (text near the window edge), put it just to the right instead.
+function showGrabButton(bubble) {
+  grabBtn._bubble = bubble;
+  grabBtn.style.display = "block";
+  // The matched bubble is a full-width row, so its edges are far from the text.
+  // Anchor to the text element instead — it wraps the words tightly.
+  const textEl = bubble.querySelector(CONFIG.bubbleText);
+  const r = (textEl || bubble).getBoundingClientRect();
+  const bw = grabBtn.offsetWidth || 54;
+  const bh = grabBtn.offsetHeight || 22;
+  const gap = 8;
+
+  let left = r.left - bw - gap;
+  if (left < 8) left = r.right + gap; // no room on the left → go right
+
+  let top = r.top + r.height / 2 - bh / 2;
+  top = Math.max(4, Math.min(top, window.innerHeight - bh - 4));
+
+  grabBtn.style.left = left + "px";
+  grabBtn.style.top = top + "px";
+}
+
+function hideGrabButton() {
+  if (grabBtn) {
+    grabBtn.style.display = "none";
+    grabBtn._bubble = null;
+  }
 }
 
 function addFloatingButton() {
